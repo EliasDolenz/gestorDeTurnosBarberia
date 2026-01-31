@@ -32,4 +32,4 @@ El repositorio se divide en dos módulos principales:
 3. Ejecutar `npm run dev`. La web estará disponible en `http://localhost:5173`.
 
 ---
-Desarrollado por Elias - [Tu LinkedIn si querés]
+Desarrollado por Elias Dolenz - https://www.linkedin.com/in/eliasdolenz/
