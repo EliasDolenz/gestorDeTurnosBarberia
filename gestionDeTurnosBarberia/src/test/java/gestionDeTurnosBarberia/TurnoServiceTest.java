@@ -9,10 +9,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,7 +83,7 @@ public class TurnoServiceTest {
         when(turnoRepository.existsByUnBarberoAndDiaYHoraDelTurno(barberoSimulado, horaDelTurno))
                 .thenReturn(Boolean.FALSE);
 
-        when(turnoService.saveTurno(idCliente, idBarbero, horaDelTurno)).thenReturn(turnoEsperado);
+        when(turnoRepository.save(any(Turno.class))).thenReturn(turnoEsperado);
 
         Turno resultado = turnoService.saveTurno(idCliente, idBarbero, horaDelTurno);
 
