@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.Test;
@@ -90,5 +92,57 @@ public class TurnoServiceTest {
         assertNotNull(resultado);
         assertEquals(horaDelTurno, resultado.getDiaYHoraDelTurno());
         verify(turnoRepository, times(1)).save(any(Turno.class));
+    }
+
+    @Test
+    void cuandoElBarberoYaTieneTurno_entoncesLanzaError() {
+        LocalDateTime fechaFutura = LocalDateTime.parse("2026-03-19T15:30:00");
+        Long idBarbero = 1L;
+        Barbero barberoSimulado = new Barbero();
+
+        Long idCliente = 1L;
+        Cliente clienteSimulado = new Cliente();
+        clienteSimulado.setId(idCliente);
+        barberoSimulado.setId(idBarbero);
+
+        when(barberoService.findBarberoById(idBarbero)).thenReturn(barberoSimulado);
+        when(turnoRepository.existsByUnBarberoAndDiaYHoraDelTurno(barberoSimulado, fechaFutura))
+                .thenReturn(Boolean.TRUE);
+
+        assertThrows(BusinessLogicException.class, () -> {
+            turnoService.saveTurno(clienteSimulado.getId(), barberoSimulado.getId(), fechaFutura);
+        });
+    }
+
+    @Test
+    void cuandoLaFechaEsPasada_entoncesLanzaError() {
+        LocalDateTime fecha = LocalDateTime.now().minusDays(1);
+        Long idCliente = 1L;
+        Long idBarbero = 1L;
+
+        BusinessLogicException ex = assertThrows(BusinessLogicException.class, () -> {
+            turnoService.saveTurno(idCliente, idBarbero, fecha);
+        });
+
+        assertEquals("El día y horario seleccionado corresponde a una fecha que ya paso", ex.getMessage());
+    }
+
+    @Test
+    void elBarberoNoTieneUnHorarioDisponible_entoncesLanzaError() {
+        LocalDateTime fecha = LocalDateTime.of(2025, 2, 5, 10, 0, 0);
+        Long idBarbero = 1L;
+        Barbero barberoSimulado = new Barbero();
+        barberoSimulado.setId(idBarbero);
+        when(barberoService.findBarberoById(idBarbero)).thenReturn(barberoSimulado);
+
+        turnoService.findTurnosByBarberoAndFecha(idBarbero, fecha);
+
+        LocalDateTime inicioEsperado = fecha.with(LocalTime.MIN);
+        LocalDateTime finEsperado = fecha.with(LocalTime.MAX);
+
+        verify(turnoRepository).findByUnBarberoAndDiaYHoraDelTurnoBetween(
+                eq(barberoSimulado),
+                eq(inicioEsperado),
+                eq(finEsperado));
     }
 }
