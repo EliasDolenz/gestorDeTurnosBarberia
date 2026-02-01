@@ -38,7 +38,6 @@ public class TurnoService {
 
         if (this.turnoRepository.existsByUnBarberoAndDiaYHoraDelTurno(unBarbero, diaYHoraDelTurno)) {
             throw new BusinessLogicException("El barbero no tiene disponibilidad en ese turno");
-
         }
 
         Turno nuevoTurno = new Turno();
