@@ -1,41 +1,127 @@
-/* Un toque de estilo "Barber Shop" */
-body {
-  background-color: #1a1a1a;
-  /* Negro mate */
-  color: #e0e0e0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* App.css */
+:root {
+  --gold: #d4af37;
+  --gold-hover: #f1c40f;
+  --dark-rich: #0f0f0f;
+  --card-bg: #1a1a1a;
+  --border: #333;
 }
 
-.container {
-  max-width: 600px;
-  margin: 40px auto;
+.app-wrapper {
+  min-height: 100vh;
+  background-color: var(--dark-rich);
+  color: #fff;
   padding: 20px;
-  background: #262626;
+}
+
+.main-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.gold-text {
+  color: var(--gold);
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  /* Formulario chico, Lista grande */
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 25px;
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  border-top: 4px solid #d4af37;
-  /* Dorado */
+  border: 1px solid var(--border);
+}
+
+.input-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-bottom: 5px;
+  text-transform: uppercase;
 }
 
 input {
-  padding: 10px;
-  margin-right: 10px;
-  border: 1px solid #444;
-  background: #333;
+  background: #252525;
+  border: 1px solid var(--border);
+  padding: 12px;
   color: white;
   border-radius: 4px;
 }
 
-button {
-  padding: 10px 20px;
-  background-color: #d4af37;
-  color: #1a1a1a;
+.btn-gold {
+  width: 100%;
+  background: var(--gold);
   border: none;
+  padding: 15px;
   font-weight: bold;
   cursor: pointer;
-  border-radius: 4px;
+  transition: 0.3s;
 }
 
-button:hover {
-  background-color: #b8962e;
+.btn-gold:hover {
+  background: var(--gold-hover);
+  transform: scale(1.02);
+}
+
+/* Estilo de las Tarjetas de la Lista */
+.grid-barberos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.barbero-card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 3px solid var(--gold);
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background: var(--gold);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid #444;
+  color: #888;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s;
+  margin-left: auto;
+  /* Lo empuja a la derecha */
+}
+
+.btn-delete:hover {
+  background: #c0392b;
+  /* Rojo suave */
+  color: white;
+  border-color: #c0392b;
 }
