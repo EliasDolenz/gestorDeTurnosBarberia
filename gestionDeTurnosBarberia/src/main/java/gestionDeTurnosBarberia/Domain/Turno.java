@@ -2,6 +2,7 @@ package gestionDeTurnosBarberia.Domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
@@ -27,8 +28,8 @@ public class Turno {
     private LocalDateTime diaYHoraDelTurno;
 
     @ManyToOne
-    @JoinColumn(name = "barbero_id")
-    @JsonManagedReference
+    @JoinColumn(name = "barbero_id") 
+    @JsonBackReference 
     private Barbero unBarbero;
 
     @ManyToOne

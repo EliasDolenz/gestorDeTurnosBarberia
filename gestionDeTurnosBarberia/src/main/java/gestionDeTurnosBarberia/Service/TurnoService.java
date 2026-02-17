@@ -28,9 +28,16 @@ public class TurnoService {
     }
 
     public Turno saveTurno(Long idCliente, Long idBarbero, LocalDateTime diaYHoraDelTurno) {
-
+        LocalTime horaDelTurno = diaYHoraDelTurno.toLocalTime();
+        LocalTime horaDeApertura = LocalTime.of(9, 0);
+        LocalTime horaDeCierre = LocalTime.of(20, 0);
         Barbero unBarbero = barberoService.findBarberoById(idBarbero);
         Cliente unCliente = clienteService.findClienteById(idCliente);
+
+        if (horaDelTurno.isAfter(horaDeCierre) || horaDelTurno.isBefore(horaDeApertura)) {
+            throw new BusinessLogicException(
+                    "En ese horario la barberia se encuentra cerrada. Trabajamos desde las 9:00hs hasta las 20:00hs");
+        }
 
         if (diaYHoraDelTurno.isBefore(LocalDateTime.now())) {
             throw new BusinessLogicException("El día y horario seleccionado corresponde a una fecha que ya paso");
