@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import gestionDeTurnosBarberia.Domain.Barbero;
 import gestionDeTurnosBarberia.Service.BarberoService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/barberos")
@@ -37,9 +38,9 @@ public class BarberoController {
         Barbero barbero = this.barberoService.findBarberoById(idBarbero);
         return ResponseEntity.ok(barbero);
     }
-
+    
     @PutMapping("/{idBarbero}")
-    public ResponseEntity<Barbero> updateBarbero(@PathVariable Long idBarbero, @RequestBody Barbero detailBarbero) {
+    public ResponseEntity<Barbero> updateBarbero(@PathVariable Long idBarbero, @Valid @RequestBody Barbero detailBarbero) {
         Barbero barberoExisting = this.barberoService.findBarberoById(idBarbero);
 
         barberoExisting.setFirstName(detailBarbero.getFirstName());
@@ -56,9 +57,9 @@ public class BarberoController {
         return ResponseEntity.noContent().build();
 
     }
-
+    
     @PostMapping
-    public ResponseEntity<Barbero> createBarbero(@RequestBody Barbero newBarbero) {
+    public ResponseEntity<Barbero> createBarbero(@Valid @RequestBody Barbero newBarbero) {
         Barbero savedBarbero = this.barberoService.saveBarbero(newBarbero);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(savedBarbero.getId()).toUri();

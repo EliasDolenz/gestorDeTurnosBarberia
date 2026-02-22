@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import gestionDeTurnosBarberia.Domain.Turno;
 import gestionDeTurnosBarberia.Dto.TurnoRequest;
 import gestionDeTurnosBarberia.Service.TurnoService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/turnos")
@@ -42,14 +43,14 @@ public class TurnoController {
     }
 
     @PutMapping("{idTurno}")
-    public ResponseEntity<Turno> updateTurno(@PathVariable Long idTurno, @RequestBody TurnoRequest newRequest) {
+    public ResponseEntity<Turno> updateTurno(@PathVariable Long idTurno, @Valid @RequestBody TurnoRequest newRequest) {
         Turno turnoActualizado = this.turnoService.updateTurno(idTurno, newRequest);
         return ResponseEntity.ok(turnoActualizado);
 
     }
 
     @PostMapping
-    public ResponseEntity<Turno> createTurno(@RequestBody TurnoRequest newRequest) {
+    public ResponseEntity<Turno> createTurno(@Valid @RequestBody TurnoRequest newRequest) {
         Turno savedTurno = this.turnoService.saveTurno(newRequest.getIdCliente(), newRequest.getIdBarbero(),
                 newRequest.getFecha());
 

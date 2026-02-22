@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import gestionDeTurnosBarberia.Domain.Cliente;
 import gestionDeTurnosBarberia.Service.ClienteService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -39,7 +40,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{idCliente}")
-    public ResponseEntity<Cliente> updateCliente(@PathVariable Long idCliente, @RequestBody Cliente detailCliente) {
+    public ResponseEntity<Cliente> updateCliente(@PathVariable Long idCliente, @Valid @RequestBody Cliente detailCliente) {
         Cliente clienteExisting = this.clienteService.findClienteById(idCliente);
 
         clienteExisting.setFirstName(detailCliente.getFirstName());
@@ -58,7 +59,7 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> createCliente(@RequestBody Cliente newCliente) {
+    public ResponseEntity<Cliente> createCliente(@Valid @RequestBody Cliente newCliente) {
         Cliente savedCliente = this.clienteService.saveCliente(newCliente);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(savedCliente.getId()).toUri();
