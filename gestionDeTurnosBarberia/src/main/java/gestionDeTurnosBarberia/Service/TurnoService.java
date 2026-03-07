@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import gestionDeTurnosBarberia.Domain.Barbero;
 import gestionDeTurnosBarberia.Domain.Cliente;
 import gestionDeTurnosBarberia.Domain.Turno;
+import gestionDeTurnosBarberia.Dto.TurnoCreateDTO;
 import gestionDeTurnosBarberia.Dto.TurnoRequest;
 import gestionDeTurnosBarberia.Exception.BusinessLogicException;
 import gestionDeTurnosBarberia.Exception.ResourceNotFoundException;
 import gestionDeTurnosBarberia.Repository.TurnoRepository;
+import jakarta.validation.Valid;
 
 @Service
 public class TurnoService {
@@ -30,15 +32,15 @@ public class TurnoService {
         this.turnoRepository = turnoRepository;
     }
 
-    public Turno saveTurno(Long idCliente, Long idBarbero, LocalDateTime diaYHoraDelTurno) {
-        logger.info("Creando nuevo turno - Cliente {}, Barbero {}, Fecha y Hora: {}", idCliente, idBarbero,
-                diaYHoraDelTurno);
+    public Turno saveTurno(@Valid TurnoCreateDTO dto) {
+        logger.info("Creando nuevo turno - Cliente {}, Barbero {}, Fecha y Hora: {}", dto.idCliente(), dto.idBarbero(),
+                dto.fecha());
 
-        LocalTime horaDelTurno = diaYHoraDelTurno.toLocalTime();
+        LocalTime horaDelTurno = dto.fecha().toLocalTime();
         LocalTime horaDeApertura = LocalTime.of(9, 0);
         LocalTime horaDeCierre = LocalTime.of(20, 0);
-        Barbero unBarbero = barberoService.findBarberoById(idBarbero);
-        Cliente unCliente = clienteService.findClienteById(idCliente);
+        Barbero unBarbero = barberoService.findBarberoById(dto.idBarbero());
+        Cliente unCliente = clienteService.findClienteById(dto.idCliente());
 
         if (horaDelTurno.isAfter(horaDeCierre) || horaDelTurno.isBefore(horaDeApertura)) {
             logger.warn("Intento de turno fuera de horario: {}", horaDelTurno);
@@ -46,21 +48,11 @@ public class TurnoService {
                     "En ese horario la barberia se encuentra cerrada. Trabajamos desde las 9:00hs hasta las 20:00hs");
         }
 
-        if (diaYHoraDelTurno.isBefore(LocalDateTime.now())) {
-            logger.warn("Intento de turno en fecha pasada: {}", diaYHoraDelTurno);
-            throw new BusinessLogicException("El día y horario seleccionado corresponde a una fecha que ya paso");
-        }
-
-        if (this.turnoRepository.existsByUnBarberoAndDiaYHoraDelTurno(unBarbero, diaYHoraDelTurno)) {
-            logger.warn("El Barbero no tiene disponible el día y horario: {}", diaYHoraDelTurno);
-            throw new BusinessLogicException("El barbero no tiene disponibilidad en ese turno");
-        }
-
         Turno nuevoTurno = new Turno();
 
         nuevoTurno.setUnBarbero(unBarbero);
         nuevoTurno.setUnCliente(unCliente);
-        nuevoTurno.setDiaYHoraDelTurno(diaYHoraDelTurno);
+        nuevoTurno.setDiaYHoraDelTurno(dto.fecha());
 
         Turno saved = this.turnoRepository.save(nuevoTurno);
         logger.info("Turno creado exitosamente - ID: {}", saved.getId());

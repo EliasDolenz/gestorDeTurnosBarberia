@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import gestionDeTurnosBarberia.Domain.Turno;
+import gestionDeTurnosBarberia.Dto.TurnoCreateDTO;
 import gestionDeTurnosBarberia.Dto.TurnoRequest;
 import gestionDeTurnosBarberia.Service.TurnoService;
 import jakarta.validation.Valid;
@@ -50,9 +51,8 @@ public class TurnoController {
     }
 
     @PostMapping
-    public ResponseEntity<Turno> createTurno(@Valid @RequestBody TurnoRequest newRequest) {
-        Turno savedTurno = this.turnoService.saveTurno(newRequest.getIdCliente(), newRequest.getIdBarbero(),
-                newRequest.getFecha());
+    public ResponseEntity<Turno> createTurno(@Valid @RequestBody TurnoCreateDTO newTurno) {
+        Turno savedTurno = this.turnoService.saveTurno(newTurno);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().buildAndExpand(savedTurno.getId()).toUri();
         return ResponseEntity.created(location).body(savedTurno);

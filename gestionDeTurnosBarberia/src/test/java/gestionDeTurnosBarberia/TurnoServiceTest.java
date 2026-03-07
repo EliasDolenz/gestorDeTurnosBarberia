@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import gestionDeTurnosBarberia.Domain.Barbero;
 import gestionDeTurnosBarberia.Domain.Cliente;
 import gestionDeTurnosBarberia.Domain.Turno;
+import gestionDeTurnosBarberia.Dto.TurnoCreateDTO;
 import gestionDeTurnosBarberia.Exception.BusinessLogicException;
 import gestionDeTurnosBarberia.Repository.TurnoRepository;
 import gestionDeTurnosBarberia.Service.BarberoService;
@@ -48,13 +49,13 @@ public class TurnoServiceTest {
         Barbero barbero = new Barbero();
         Cliente unCliente = new Cliente();
         LocalDateTime horarioDelTurno = LocalDateTime.parse("2026-02-25T15:30:00");
-
+        TurnoCreateDTO dto = new TurnoCreateDTO(unCliente.getId(), barbero.getId(), horarioDelTurno);
         when(barberoService.findBarberoById(any())).thenReturn(barbero);
         when(clienteService.findClienteById(any())).thenReturn(unCliente);
         when(turnoRepository.existsByUnBarberoAndDiaYHoraDelTurno(barbero, horarioDelTurno)).thenReturn(true);
 
         BusinessLogicException ex = assertThrows(BusinessLogicException.class, () -> {
-            turnoService.saveTurno(1L, 1L, horarioDelTurno);
+            turnoService.saveTurno(dto);
         });
 
         assertEquals("El barbero no tiene disponibilidad en ese turno", ex.getMessage());
@@ -71,7 +72,7 @@ public class TurnoServiceTest {
 
         barberoSimulado.setId(idBarbero);
         clienteSimulado.setId(idCliente);
-
+        TurnoCreateDTO dto = new TurnoCreateDTO(idCliente, idBarbero, horaDelTurno);
         Turno turnoEsperado = new Turno();
         turnoEsperado.setDiaYHoraDelTurno(horaDelTurno);
         turnoEsperado.setUnBarbero(barberoSimulado);
@@ -85,7 +86,7 @@ public class TurnoServiceTest {
 
         when(turnoRepository.save(any(Turno.class))).thenReturn(turnoEsperado);
 
-        Turno resultado = turnoService.saveTurno(idCliente, idBarbero, horaDelTurno);
+        Turno resultado = turnoService.saveTurno(dto);
 
         assertNotNull(resultado);
         assertEquals(horaDelTurno, resultado.getDiaYHoraDelTurno());
@@ -102,13 +103,13 @@ public class TurnoServiceTest {
         Cliente clienteSimulado = new Cliente();
         clienteSimulado.setId(idCliente);
         barberoSimulado.setId(idBarbero);
-
+        TurnoCreateDTO dto = new TurnoCreateDTO(idCliente, idBarbero, fechaFutura);
         when(barberoService.findBarberoById(idBarbero)).thenReturn(barberoSimulado);
         when(turnoRepository.existsByUnBarberoAndDiaYHoraDelTurno(barberoSimulado, fechaFutura))
                 .thenReturn(Boolean.TRUE);
 
         assertThrows(BusinessLogicException.class, () -> {
-            turnoService.saveTurno(clienteSimulado.getId(), barberoSimulado.getId(), fechaFutura);
+            turnoService.saveTurno(dto);
         });
     }
 
@@ -117,9 +118,9 @@ public class TurnoServiceTest {
         LocalDateTime fecha = LocalDateTime.now().minusDays(1);
         Long idCliente = 1L;
         Long idBarbero = 1L;
-
+        TurnoCreateDTO dto = new TurnoCreateDTO(idCliente, idBarbero, fecha);
         BusinessLogicException ex = assertThrows(BusinessLogicException.class, () -> {
-            turnoService.saveTurno(idCliente, idBarbero, fecha);
+            turnoService.saveTurno(dto);
         });
 
         assertEquals("El día y horario seleccionado corresponde a una fecha que ya paso", ex.getMessage());
